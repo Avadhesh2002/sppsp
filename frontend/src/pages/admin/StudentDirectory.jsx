@@ -986,6 +986,25 @@ const PdfExportModal = ({ isOpen, onClose, exportCriteria, onCriteriaChange, pdf
 const INP = "w-full h-11 bg-white border-2 border-gray-200 rounded-xl px-3 font-semibold text-sm outline-none focus:border-primary transition-colors";
 const LB  = "text-[10px] font-black text-gray-500 uppercase tracking-wide block mb-1";
 
+// EF and ES — used by EditStudentModal (uncontrolled, for editing existing student)
+const EF = ({ label, name, type='text', defaultValue='', placeholder='', maxLength }) => (
+  <div>
+    <label className={LB}>{label}</label>
+    <input name={name} type={type} defaultValue={defaultValue || ''} placeholder={placeholder}
+      maxLength={maxLength} autoComplete="off" className={INP} />
+  </div>
+);
+const ES = ({ label, name, defaultValue='', options }) => (
+  <div>
+    <label className={LB}>{label}</label>
+    <select name={name} defaultValue={defaultValue || ''} className={INP}>
+      {options.map(o => typeof o==='string'
+        ? <option key={o} value={o}>{o}</option>
+        : <option key={o.v} value={o.v}>{o.l}</option>)}
+    </select>
+  </div>
+);
+
 const FI = ({ label, name, type='text', placeholder='', defaultValue='', required=false, maxLength }) => (
   <div>
     <label className={LB}>{label}{required && <span className="text-danger ml-0.5">*</span>}</label>
@@ -1101,8 +1120,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
         </div>
 
         {/* ── TAB 0: CREDENTIALS ── */}
-        {tab===0 && (
-          <div className="space-y-4">
+        <div className={tab===0 ? 'space-y-4' : 'hidden'}>
             <div className="p-4 bg-green-50 rounded-2xl border-2 border-green-200">
               <p className="text-[10px] font-black text-green-700 uppercase mb-3">Login Credentials</p>
               <div className="grid grid-cols-2 gap-3">
@@ -1126,12 +1144,10 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <p className="text-[10px] text-secondary mt-2">Photo (optional)</p>
             </div>
             <Button type="button" fullWidth icon={ChevronRight} onClick={() => setTab(1)}>Next: Student Details</Button>
-          </div>
-        )}
+        </div>
 
         {/* ── TAB 1: STUDENT ── */}
-        {tab===1 && (
-          <div className="space-y-3">
+        <div className={tab===1 ? 'space-y-3' : 'hidden'}>
             <FI label="Full Name" name="name" placeholder="Student's full name" required />
             <div className="grid grid-cols-2 gap-3">
               <SI label="Gender" name="gender" defaultValue="Male" options={['Male','Female','Other']} />
@@ -1157,12 +1173,10 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <Button type="button" variant="outline" fullWidth onClick={() => setTab(0)}>Back</Button>
               <Button type="button" fullWidth icon={ChevronRight} onClick={() => setTab(2)}>Next: Parents</Button>
             </div>
-          </div>
-        )}
+        </div>
 
         {/* ── TAB 2: PARENTS ── */}
-        {tab===2 && (
-          <div className="space-y-3">
+        <div className={tab===2 ? 'space-y-3' : 'hidden'}>
             <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100 space-y-3">
               <p className="text-[10px] font-black text-blue-700 uppercase">Father</p>
               <div className="grid grid-cols-2 gap-3">
@@ -1205,12 +1219,10 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <Button type="button" variant="outline" fullWidth onClick={() => setTab(1)}>Back</Button>
               <Button type="button" fullWidth icon={ChevronRight} onClick={() => setTab(3)}>Next: Address</Button>
             </div>
-          </div>
-        )}
+        </div>
 
         {/* ── TAB 3: ADDRESS & SCHOOL ── */}
-        {tab===3 && (
-          <div className="space-y-3">
+        <div className={tab===3 ? 'space-y-3' : 'hidden'}>
             <div className="p-3 bg-orange-50 rounded-2xl border border-orange-100 space-y-3">
               <p className="text-[10px] font-black text-orange-700 uppercase">Residential Address</p>
               <FI label="House No. / City / Street *" name="address" required />
@@ -1275,8 +1287,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <Button type="button" variant="outline" fullWidth onClick={() => setTab(2)}>Back</Button>
               <Button type="submit" fullWidth isLoading={submitting} icon={UserPlus}>Add Student</Button>
             </div>
-          </div>
-        )}
+        </div>
 
       </form>
     </Modal>
