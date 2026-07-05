@@ -563,7 +563,7 @@ const ViewStudentModal = ({ isOpen, onClose, student }) => {
             <div className="flex flex-wrap gap-2 mt-1">
               <span className="text-[10px] font-bold text-primary bg-white/70 px-2 py-0.5 rounded-md border border-indigo-100">Adm No: {student.UID || 'Not assigned'}</span>
               <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${student.admissionType === 'New' ? 'bg-amber-500 text-white border-amber-600' : 'bg-emerald-500 text-white border-emerald-600'}`}>
-                {student.admissionType === 'New' ? 'Fresh Admission' : 'Promoted'}
+                {student.admissionType === 'New' ? 'Fresh Admission' : 'Old Student'}
               </span>
               {student.accountStatus && <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700 border border-indigo-200">{student.accountStatus}</span>}
             </div>
@@ -578,7 +578,7 @@ const ViewStudentModal = ({ isOpen, onClose, student }) => {
           <IB label="Date of Birth" value={student.dateOfBirth ? new Date(student.dateOfBirth).toLocaleDateString('en-GB') : null} />
           <IB label="Blood Group" value={student.bloodGroup} />
           <IB label="Category" value={student.category} />
-          <IB label="Admission Type" value={student.admissionType === 'New' ? 'Fresh Admission' : 'Promoted Student'} />
+          <IB label="Admission Type" value={student.admissionType === 'New' ? 'Fresh Admission' : 'Old Student'} />
           <IB label="Admission Date" value={student.admissionDate ? new Date(student.admissionDate).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : null} />
           <IB label="Academic Year" value={student.academicYear} />
         </div>
@@ -769,7 +769,7 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <ES label="Category" name="category" defaultValue={student.category} options={['General','OBC','SC','ST','Minority','Other']} />
-              <ES label="Admission Type" name="admissionType" defaultValue={student.admissionType} options={[{v:'New',l:'New Admission'},{v:'Old',l:'Promoted (Old)'}]} />
+              <ES label="Admission Type" name="admissionType" defaultValue={student.admissionType} options={[{v:'New',l:'New Admission'},{v:'Old',l:'Old Student'}]} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <EF label="Aadhar No." name="aadharNumber" defaultValue={student.aadharNumber} placeholder="XXXX-XXXX-XXXX" maxLength={14} />
@@ -1146,7 +1146,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <SI label="Blood Group" name="bloodGroup" defaultValue="" options={['','A+','A-','B+','B-','AB+','AB-','O+','O-'].map(b=>({v:b,l:b||'Select'}))} />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <SI label="Admission Type" name="admissionType" defaultValue="New" options={[{v:'New',l:'New Admission'},{v:'Old',l:'Promoted'}]} />
+              <SI label="Admission Type" name="admissionType" defaultValue="New" options={[{v:'New',l:'New Admission'},{v:'Old',l:'Old Student'}]} />
               <FI label="Sibling in School" name="siblingName" placeholder="Name if enrolled" />
             </div>
             <div className="grid grid-cols-2 gap-3">
