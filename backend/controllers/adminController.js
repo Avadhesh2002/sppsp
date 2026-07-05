@@ -16,7 +16,11 @@ const PROMOTION_MAP = {
     '5': '6',
     '6': '7',
     '7': '8',
-    '8': 'Graduated' 
+    '8': '9',
+    '9': '10',
+    '10': '11',
+    '11': '12',
+    '12': 'Graduated' 
 };
 const getPendingStudents = async (req, res) => {
     try {

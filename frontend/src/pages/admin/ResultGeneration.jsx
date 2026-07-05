@@ -11,7 +11,7 @@ import principalSign from '../../assets/sign.png';
 const fmt = (d) => new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 const today = fmt(new Date());
 const PASS_MARK = 33;
-const CLASS_ORDER = ['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8'];
+const CLASS_ORDER = ['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const getNextClass = (currentClass, passed) => {
   if (!passed) return currentClass;
   const idx = CLASS_ORDER.indexOf(String(currentClass));

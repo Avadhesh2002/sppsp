@@ -12,7 +12,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Toast from '../../components/common/Toast';
 import { useSettings } from '../../context/SettingsContext';
 
-const CLASS_ORDER = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'];
+const CLASS_ORDER = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'];
 const TERMS = ['Unit-1', 'Half Yearly Exam', 'Unit-2', 'Annual Exam'];
 
 const SyllabusManagement = () => {

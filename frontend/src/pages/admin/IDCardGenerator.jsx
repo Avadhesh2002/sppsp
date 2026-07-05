@@ -342,7 +342,7 @@ const IDCardGenerator = () => {
   };
 
   const handleTabChange = (t) => { setTab(t); setSearch(''); setClassFilter(''); setSelected(new Set()); setPage(1); };
-  const CLASSES = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'];
+  const CLASSES = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'];
 
   return (
     <div className="space-y-5">

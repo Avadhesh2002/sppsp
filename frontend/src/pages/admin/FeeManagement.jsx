@@ -14,7 +14,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Toast from '../../components/common/Toast';
 import { useSettings } from '../../context/SettingsContext';
 
-const CLASSES = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'];
+const CLASSES = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'];
 const MONTHS  = ['April','May','June','July','August','September','October','November','December','January','February','March'];
 const MODES   = ['Cash','Bank Transfer','Google Pay','PhonePe'];
 const FREQ    = ['monthly','quarterly','annually','one-time'];

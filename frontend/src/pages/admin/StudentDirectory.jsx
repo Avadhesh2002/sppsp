@@ -298,7 +298,7 @@ const handleUpdate = async (e) => {
             onChange={(e) => setFilters({ ...filters, studentClass: e.target.value, page: 1 })}
           >
             <option value="">All Classes</option>
-            {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8'].map(c => (
+            {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c => (
               <option key={c} value={c}>Class {c}</option>
             ))}
           </select>
@@ -761,7 +761,7 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <EF label="Date of Birth" name="dateOfBirth" type="date" defaultValue={student.dateOfBirth ? new Date(student.dateOfBirth).toISOString().split('T')[0] : ''} />
-              <ES label="Class" name="class" defaultValue={student.class} options={['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'].map(c=>({v:c,l:`Class ${c}`}))} />
+              <ES label="Class" name="class" defaultValue={student.class} options={['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'].map(c=>({v:c,l:`Class ${c}`}))} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <EF label="Section" name="section" defaultValue={student.section} placeholder="A/B/C" />
@@ -943,7 +943,7 @@ const PdfExportModal = ({ isOpen, onClose, exportCriteria, onCriteriaChange, pdf
             <select className="w-full h-12 bg-gray-50 border-2 border-gray-100 rounded-xl px-4 font-bold mt-1 outline-none focus:border-primary"
               value={pdfClass} onChange={(e) => setPdfClass(e.target.value)}>
               <option value="">Choose Class...</option>
-              {['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'].map(c => <option key={c} value={c}>Class {c}</option>)}
+              {['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'].map(c => <option key={c} value={c}>Class {c}</option>)}
             </select>
           </div>
         )}
@@ -1138,7 +1138,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <FI label="Date of Birth" name="dateOfBirth" type="date" required />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <SI label="Class" name="class" defaultValue="1" options={['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'].map(c=>({v:c,l:`Class ${c}`}))} />
+              <SI label="Class" name="class" defaultValue="1" options={['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'].map(c=>({v:c,l:`Class ${c}`}))} />
               <FI label="Section" name="section" placeholder="A / B / C" />
             </div>
             <div className="grid grid-cols-2 gap-3">

@@ -9,7 +9,7 @@ const feeComponentSchema = new mongoose.Schema({
 }, { _id: false });
 
 const feeStructureSchema = new mongoose.Schema({
-    className:     { type: String, required: true, enum: ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'] },
+    className:     { type: String, required: true, enum: ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'] },
     admissionType: { type: String, required: true, enum: ['new','old'], default: 'old' },
     academicYear:  { type: String, required: true },
     feeComponents: [feeComponentSchema],

@@ -203,7 +203,7 @@ const onCreateClass = async (data) => {
             <label className="text-xs font-bold text-gray-400 uppercase ml-1">Grade Name</label>
             <select className="w-full h-12 bg-white border-2 border-gray-100 rounded-xl px-4 font-bold" {...register("className", { required: true })}>
               <option value="">Select Grade Level...</option>
-              {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8'].map(c => <option key={c} value={c}>Class {c}</option>)}
+              {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c => <option key={c} value={c}>Class {c}</option>)}
             </select>
           </div>
           <Input label="Student Capacity" type="number" {...register("capacity", { required: true })} />
@@ -233,7 +233,7 @@ const onCreateClass = async (data) => {
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase ml-1">Grade Name</label>
             <select className="w-full h-12 bg-white border-2 border-gray-100 rounded-xl px-4 font-bold" {...register("className")}>
-              {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8'].map(c => <option key={c} value={c}>Class {c}</option>)}
+              {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c => <option key={c} value={c}>Class {c}</option>)}
             </select>
           </div>
           <Input label="Student Capacity" type="number" {...register("capacity")} />

@@ -194,7 +194,7 @@ const StudentRegistration = () => {
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-secondary uppercase">Class <span className="text-danger">*</span></label>
                     <select className="w-full h-12 bg-white border-2 border-gray-100 rounded-xl px-4 font-bold outline-none focus:border-primary" {...register("class", { required: true })}>
-                      {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8'].map(c =>
+                      {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c =>
                         <option key={c} value={c}>Class {c}</option>
                       )}
                     </select>

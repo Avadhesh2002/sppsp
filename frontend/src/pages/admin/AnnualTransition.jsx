@@ -63,7 +63,7 @@ const AnnualTransition = () => {
                    <p className="text-sm font-bold text-secondary">All active students will move to the next grade.</p>
                 </Card>
                 <Card title="Graduation Logic" icon={GraduationCap}>
-                   <p className="text-sm font-bold text-secondary">Class 8 students will be marked as "Graduated".</p>
+                   <p className="text-sm font-bold text-secondary">Class 12 students will be marked as "Graduated".</p>
                 </Card>
             </div>
 

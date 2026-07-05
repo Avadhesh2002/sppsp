@@ -131,7 +131,7 @@ const AdvancedStudentOps = () => {
                         onChange={(e) => setPromoData({...promoData, fromClass: e.target.value})}
                       >
                          <option value="">Select...</option>
-                         {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8'].map(c => <option key={c} value={c}>Class {c}</option>)}
+                         {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c => <option key={c} value={c}>Class {c}</option>)}
                       </select>
                    </div>
                    <ArrowRight className="text-primary mt-6" />
@@ -143,7 +143,7 @@ const AdvancedStudentOps = () => {
                         onChange={(e) => setPromoData({...promoData, toClass: e.target.value})}
                       >
                          <option value="">Select...</option>
-                         {['UKG', '1', '2', '3', '4', '5', '6', '7', '8', 'Graduated'].map(c => <option key={c} value={c}>Class {c}</option>)}
+                         {['UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', 'Graduated'].map(c => <option key={c} value={c}>Class {c}</option>)}
                       </select>
                    </div>
                 </div>

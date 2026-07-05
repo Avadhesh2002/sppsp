@@ -22,7 +22,7 @@ const SyllabusView = () => {
     const [expandedId, setExpandedId] = useState(null);
     const [error,      setError]      = useState(null);
 
-    const CLASS_ORDER = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8'];
+    const CLASS_ORDER = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'];
 
     // Teacher: load class list
     useEffect(() => {
