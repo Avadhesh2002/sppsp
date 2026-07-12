@@ -15,9 +15,12 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  // Vercel deployed frontend — deploy hone ke baad actual URL yahan update karo
-  "https://spps-frontend.vercel.app",
-  // Custom domain agar ho
+  // Production domain
+  "https://sppsp.in",
+  "https://www.sppsp.in",
+  // Vercel preview URL (update after deploy)
+  "https://sppsp.vercel.app",
+  // Custom FRONTEND_URL from env
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
