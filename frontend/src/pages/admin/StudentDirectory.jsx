@@ -704,6 +704,9 @@ const ViewStudentModal = ({ isOpen, onClose, student }) => {
 const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) => {
   const [imagePreview, setImagePreview] = React.useState(student?.profileImage || null);
   const [editTab, setEditTab] = React.useState(0);
+  const [photoSourceOpen, setPhotoSourceOpen] = React.useState(false);
+  const galleryInputRef = React.useRef(null);
+  const cameraInputRef  = React.useRef(null);
 
   React.useEffect(() => {
     setImagePreview(student?.profileImage || null);
@@ -748,13 +751,52 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
                   {imagePreview ? <img src={imagePreview} alt="Student" className="w-full h-full object-cover" />
                     : <span className="text-3xl font-black text-primary/30">{student.name?.charAt(0)}</span>}
                 </div>
-                <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-full cursor-pointer shadow-lg hover:bg-indigo-600 transition-colors">
+                <button type="button" onClick={() => setPhotoSourceOpen(true)}
+                  className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-full cursor-pointer shadow-lg hover:bg-indigo-600 transition-colors">
                   <Camera size={16} />
-                  <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-                </label>
+                </button>
+                <input ref={galleryInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                <input ref={cameraInputRef} type="file" className="hidden" accept="image/*" capture="environment" onChange={handleImageChange} />
               </div>
               <input type="hidden" name="profileImage" value={imagePreview || ''} />
             </div>
+
+            {/* Photo Source Modal */}
+            {photoSourceOpen && (
+              <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4">
+                <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden">
+                  <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100">
+                    <p className="text-sm font-black text-gray-900 uppercase tracking-wide">Photo Upload Karo</p>
+                    <button type="button" onClick={() => setPhotoSourceOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
+                      <span className="text-gray-600 font-bold text-lg leading-none">×</span>
+                    </button>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <p className="text-xs text-gray-500 text-center">Photo kahan se leni hai?</p>
+                    <button type="button" onClick={() => { setPhotoSourceOpen(false); cameraInputRef.current?.click(); }}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-primary hover:bg-indigo-50 transition-all">
+                      <div className="w-11 h-11 bg-indigo-100 rounded-2xl flex items-center justify-center shrink-0">
+                        <Camera size={22} className="text-primary" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-black text-gray-900">Camera se liya</p>
+                        <p className="text-xs text-gray-500">Abhi photo khicho</p>
+                      </div>
+                    </button>
+                    <button type="button" onClick={() => { setPhotoSourceOpen(false); galleryInputRef.current?.click(); }}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-primary hover:bg-indigo-50 transition-all">
+                      <div className="w-11 h-11 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
+                        <span className="text-green-600 text-xl">🖼</span>
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-black text-gray-900">Gallery se chunao</p>
+                        <p className="text-xs text-gray-500">Phone se photo select karo</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <EF label="Full Name *" name="name" defaultValue={student.name} />
               <ES label="Gender" name="gender" defaultValue={student.gender} options={['Male','Female','Other']} />
@@ -1038,11 +1080,14 @@ const DOCS = [
 ];
 
 const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
-  const [tab, setTab]           = React.useState(0);
-  const [imgPreview, setImg]    = React.useState(null);
-  const [sameAddr, setSameAddr] = React.useState(true);
-  const [transport, setTrans]   = React.useState(false);
-  const formRef = React.useRef(null);
+  const [tab, setTab]               = React.useState(0);
+  const [imgPreview, setImg]        = React.useState(null);
+  const [sameAddr, setSameAddr]     = React.useState(true);
+  const [transport, setTrans]       = React.useState(false);
+  const [photoSourceOpen, setPhotoSourceOpen] = React.useState(false);
+  const formRef       = React.useRef(null);
+  const galleryImgRef = React.useRef(null);
+  const cameraImgRef  = React.useRef(null);
 
   const reset = () => { setTab(0); setImg(null); setSameAddr(true); setTrans(false); };
   const handleClose = () => { reset(); onClose(); };
@@ -1137,12 +1182,52 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                     ? <img src={imgPreview} alt="Preview" className="w-full h-full object-cover" />
                     : <Camera size={28} className="text-gray-300" />}
                 </div>
-                <label className="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-full cursor-pointer shadow-lg hover:bg-indigo-600 transition-colors">
-                  <Camera size={14} /><input type="file" className="hidden" accept="image/*" onChange={handleImg} />
-                </label>
+                <button type="button" onClick={() => setPhotoSourceOpen(true)}
+                  className="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-full cursor-pointer shadow-lg hover:bg-indigo-600 transition-colors">
+                  <Camera size={14} />
+                </button>
+                <input ref={galleryImgRef} type="file" className="hidden" accept="image/*" onChange={handleImg} />
+                <input ref={cameraImgRef} type="file" className="hidden" accept="image/*" capture="environment" onChange={handleImg} />
               </div>
               <p className="text-[10px] text-secondary mt-2">Photo (optional)</p>
             </div>
+
+            {/* Photo Source Modal */}
+            {photoSourceOpen && (
+              <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4">
+                <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden">
+                  <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100">
+                    <p className="text-sm font-black text-gray-900 uppercase tracking-wide">Photo Upload Karo</p>
+                    <button type="button" onClick={() => setPhotoSourceOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
+                      <span className="text-gray-600 font-bold text-lg leading-none">×</span>
+                    </button>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <p className="text-xs text-gray-500 text-center">Photo kahan se leni hai?</p>
+                    <button type="button" onClick={() => { setPhotoSourceOpen(false); cameraImgRef.current?.click(); }}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-primary hover:bg-indigo-50 transition-all">
+                      <div className="w-11 h-11 bg-indigo-100 rounded-2xl flex items-center justify-center shrink-0">
+                        <Camera size={22} className="text-primary" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-black text-gray-900">Camera se liya</p>
+                        <p className="text-xs text-gray-500">Abhi photo khicho</p>
+                      </div>
+                    </button>
+                    <button type="button" onClick={() => { setPhotoSourceOpen(false); galleryImgRef.current?.click(); }}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-primary hover:bg-indigo-50 transition-all">
+                      <div className="w-11 h-11 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
+                        <span className="text-green-600 text-xl">🖼</span>
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-black text-gray-900">Gallery se chunao</p>
+                        <p className="text-xs text-gray-500">Phone se photo select karo</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             <Button type="button" fullWidth icon={ChevronRight} onClick={() => setTab(1)}>Next: Student Details</Button>
         </div>
 

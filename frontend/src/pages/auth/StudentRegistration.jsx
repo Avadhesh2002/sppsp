@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
   ArrowLeft, User, Phone, MapPin, Mail, Users, Send,
-  Camera, Info, ChevronRight, ShieldCheck, Bus, School
+  Camera, Image, Info, ChevronRight, ShieldCheck, Bus, School, X
 } from 'lucide-react';
 import API from '../../api/axios';
 import Input from '../../components/common/Input';
@@ -38,6 +38,11 @@ const StudentRegistration = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [sameAsResidential, setSameAsResidential] = useState(true);
   const [transportRequired, setTransportRequired] = useState(false);
+  const [photoSourceOpen, setPhotoSourceOpen] = useState(false);
+
+  // refs for dual photo input
+  const galleryInputRef = useRef(null);
+  const cameraInputRef  = useRef(null);
   // ✅ Documents managed separately — not via react-hook-form
   const [checkedDocs, setCheckedDocs] = useState({});
 
@@ -159,10 +164,32 @@ const StudentRegistration = () => {
                           : <div className="text-center p-2"><Camera size={28} className="mx-auto text-gray-300 mb-1" /><p className="text-[9px] text-gray-400 font-bold uppercase">Photo</p></div>
                         }
                       </div>
-                      <label className="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-full cursor-pointer shadow-md hover:bg-indigo-600 transition-colors">
+                      {/* Camera icon opens source chooser */}
+                      <button
+                        type="button"
+                        onClick={() => setPhotoSourceOpen(true)}
+                        className="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-full cursor-pointer shadow-md hover:bg-indigo-600 transition-colors"
+                      >
                         <Camera size={14} />
-                        <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-                      </label>
+                      </button>
+
+                      {/* Hidden: Gallery input */}
+                      <input
+                        ref={galleryInputRef}
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      {/* Hidden: Camera input */}
+                      <input
+                        ref={cameraInputRef}
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={handleImageChange}
+                      />
                     </div>
                     <p className="text-[9px] text-gray-400 mt-2 text-center">Passport Size</p>
                   </div>
@@ -519,6 +546,59 @@ const StudentRegistration = () => {
           </div>
         </div>
       </form>
+
+      {/* ── PHOTO SOURCE CHOOSER MODAL ── */}
+      {photoSourceOpen && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100">
+              <p className="text-sm font-black text-gray-900 uppercase tracking-wide">Photo Upload Karo</p>
+              <button
+                type="button"
+                onClick={() => setPhotoSourceOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                <X size={16} className="text-gray-600" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3">
+              <p className="text-xs text-gray-500 text-center">Photo kahan se leni hai?</p>
+
+              {/* Camera Button */}
+              <button
+                type="button"
+                onClick={() => { setPhotoSourceOpen(false); cameraInputRef.current?.click(); }}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-primary hover:bg-indigo-50 transition-all"
+              >
+                <div className="w-11 h-11 bg-indigo-100 rounded-2xl flex items-center justify-center shrink-0">
+                  <Camera size={22} className="text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-black text-gray-900">Camera se liya</p>
+                  <p className="text-xs text-gray-500">Abhi photo khicho</p>
+                </div>
+              </button>
+
+              {/* Gallery Button */}
+              <button
+                type="button"
+                onClick={() => { setPhotoSourceOpen(false); galleryInputRef.current?.click(); }}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-primary hover:bg-indigo-50 transition-all"
+              >
+                <div className="w-11 h-11 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
+                  <Image size={22} className="text-green-600" />
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-black text-gray-900">Gallery se chunao</p>
+                  <p className="text-xs text-gray-500">Phone se photo select karo</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
