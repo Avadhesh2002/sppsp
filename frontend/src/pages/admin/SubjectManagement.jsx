@@ -159,7 +159,7 @@ const SubjectManagement = () => {
                   <div>
                     <h3 className="text-lg font-black text-gray-900">{sub.subjectName}</h3>
                     <div className="flex items-center gap-2 text-xs font-bold text-secondary uppercase tracking-widest">
-                       <Hash size={12} /> {sub.subjectCode} • <ShieldCheck size={12} className="text-success" /> Max Marks: {sub.maxMarks}
+                       <ShieldCheck size={12} className="text-success" /> Max Marks: {sub.maxMarks}
                     </div>
                   </div>
                 </div>
@@ -211,9 +211,8 @@ const SubjectManagement = () => {
         size="lg"
       >
         <form onSubmit={handleSubmit(onCreateSubject)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
              <Input label="Subject Name" placeholder="e.g. Mathematics" {...register("subjectName", { required: "Name required" })} error={errors.subjectName?.message} />
-             <Input label="Subject Code" placeholder="e.g. MATH101" {...register("subjectCode", { required: "Unique Code required" })} error={errors.subjectCode?.message} />
           </div>
 
           <Input label="Default Max Marks" type="number" {...register("maxMarks", { required: true, min: 1 })} />
@@ -265,9 +264,8 @@ const SubjectManagement = () => {
         size="lg"
       >
         <form onSubmit={handleSubmit(onUpdateSubject)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <Input label="Subject Name" {...register("subjectName", { required: true })} />
-            <Input label="Subject Code" {...register("subjectCode", { required: true })} />
           </div>
 
           <Input label="Max Marks" type="number" {...register("maxMarks", { required: true })} />

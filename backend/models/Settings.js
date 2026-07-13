@@ -6,7 +6,7 @@ const settingsSchema = new mongoose.Schema({
     schoolAddress: { type: String, default: "Enter School Address" },
     contactNumber: { type: String, default: "0000000000" },
     schoolLogo: { type: String, default: "" },
-    currentAcademicYear: { type: String, default: "2025-26" },
+    currentAcademicYear: { type: String, default: "2026-27" },
     isRegistrationOpen: { type: Boolean, default: true },
     // UPI Payment Settings
     upiId: { type: String, default: "" },

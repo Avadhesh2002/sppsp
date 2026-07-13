@@ -351,10 +351,9 @@ const StudentRegistration = () => {
                 {/* Contact */}
                 <SectionTitle title="Contact Details" />
                 <FieldRow>
-                  <Input label="Parent/Guardian Email" icon={Mail} type="email" required
+                  <Input label="Parent/Guardian Email (Optional)" icon={Mail} type="email"
                     placeholder="parent@email.com"
                     {...register("parentEmail", {
-                      required: "Email is required",
                       pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email" }
                     })}
                     error={errors.parentEmail?.message} />
@@ -380,7 +379,7 @@ const StudentRegistration = () => {
                         setToast({ message: "Please provide at least one parent or guardian name", type: "error" });
                         return;
                       }
-                      await goNext(["parentEmail"]);
+                      await goNext([]);
                     }}>
                     Continue to Address
                   </Button>

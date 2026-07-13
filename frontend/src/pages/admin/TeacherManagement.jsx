@@ -117,6 +117,10 @@ const TeacherManagement = () => {
   const onHireTeacher = async (data) => {
     setSubmitting(true);
     try {
+      // Normalize name: first letter of each word capital, rest small
+      if (data.name) {
+        data.name = data.name.trim().replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+      }
       await API.post('/admin/teachers', data);
       setToast({ message: "Teacher hired!", type: "success" });
       setIsHireModalOpen(false);

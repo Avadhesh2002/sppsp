@@ -38,7 +38,8 @@ const StudentDirectory = () => {
     studentClass: '',
     admissionType: '',
     status: 'active',
-    page: 1
+    page: 1,
+    limit: 10
   });
 
   // ============ CONSTANTS ============
@@ -74,7 +75,7 @@ const availableParams = [
       try {
         const { search, studentClass, status, page, admissionType } = filters;
         const res = await API.get('/admin/students', {
-          params: { search, studentClass, status, page, admissionType, limit: 10 }
+          params: { search, studentClass, status, page, admissionType, limit: filters.limit }
         });
         setStudents(res.data.students);
         setPagination(res.data.pagination);
@@ -425,29 +426,46 @@ const handleUpdate = async (e) => {
               </div>
             </div>
 
-            {pagination.totalPages > 1 && (
-              <div className="flex items-center gap-4">
-                <button 
-                  disabled={filters.page === 1} 
-                  onClick={() => setFilters({...filters, page: filters.page - 1})} 
-                  className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl disabled:opacity-30 shadow-sm"
+            <div className="flex items-center gap-3">
+              {/* Per page selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black text-gray-400 uppercase">Show</span>
+                <select
+                  value={filters.limit}
+                  onChange={(e) => setFilters({ ...filters, limit: Number(e.target.value), page: 1 })}
+                  className="h-9 px-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-black text-gray-700 outline-none focus:border-primary cursor-pointer"
                 >
-                  <ChevronLeft size={20}/>
-                </button>
-                <div className="px-4 py-2 bg-indigo-50 rounded-lg border border-indigo-100">
-                  <span className="text-xs font-black text-primary uppercase">
-                    Page {filters.page} / {pagination.totalPages}
-                  </span>
-                </div>
-                <button 
-                  disabled={filters.page === pagination.totalPages} 
-                  onClick={() => setFilters({...filters, page: filters.page + 1})} 
-                  className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl disabled:opacity-30 shadow-sm"
-                >
-                  <ChevronRight size={20}/>
-                </button>
+                  <option value={10}>10</option>
+                  <option value={30}>30</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
               </div>
-            )}
+
+              {pagination.totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button 
+                    disabled={filters.page === 1} 
+                    onClick={() => setFilters({...filters, page: filters.page - 1})} 
+                    className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl disabled:opacity-30 shadow-sm"
+                  >
+                    <ChevronLeft size={20}/>
+                  </button>
+                  <div className="px-4 py-2 bg-indigo-50 rounded-lg border border-indigo-100">
+                    <span className="text-xs font-black text-primary uppercase">
+                      Page {filters.page} / {pagination.totalPages}
+                    </span>
+                  </div>
+                  <button 
+                    disabled={filters.page === pagination.totalPages} 
+                    onClick={() => setFilters({...filters, page: filters.page + 1})} 
+                    className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl disabled:opacity-30 shadow-sm"
+                  >
+                    <ChevronRight size={20}/>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -859,7 +877,7 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <EF label="Parent Email *" name="parentEmail" type="email" defaultValue={student.parentEmail} />
+              <EF label="Parent Email" name="parentEmail" type="email" defaultValue={student.parentEmail} />
               <EF label="WhatsApp No." name="whatsappNumber" defaultValue={student.whatsappNumber} maxLength={10} />
             </div>
           </div>
@@ -1110,7 +1128,6 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
     if (!g('fatherName') && !g('motherName') && !g('guardianName')) {
       alert("At least one parent/guardian name required"); return;
     }
-    if (!g('parentEmail').trim()) { alert("Parent email is required"); return; }
 
     const documents = {};
     DOCS.forEach(d => { documents[d.id] = !!(form.elements[`doc_${d.id}`]?.checked); });
@@ -1297,7 +1314,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <FI label="Parent Email *" name="parentEmail" type="email" required />
+              <FI label="Parent Email" name="parentEmail" type="email" />
               <FI label="WhatsApp No." name="whatsappNumber" maxLength={10} />
             </div>
             <div className="flex gap-2">
