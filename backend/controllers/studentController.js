@@ -29,9 +29,9 @@ const registerStudent = async (req, res) => {
         } = req.body;
 
         // Required fields validation
-        if (!name || !dateOfBirth || !gender || !studentClass || !address || !pincode || !category || !parentEmail) {
+        if (!name || !dateOfBirth || !gender || !studentClass || !address || !pincode || !category) {
             return res.status(400).json({
-                message: "Please fill all required fields: Name, DOB, Gender, Class, Address, Pincode, Category, and Email"
+                message: "Please fill all required fields: Name, DOB, Gender, Class, Address, Pincode, Category"
             });
         }
 
@@ -67,6 +67,23 @@ const registerStudent = async (req, res) => {
             } catch (uploadError) {
                 console.error("Registration photo upload failed:", uploadError.message);
                 profileImageUrl = "";
+            }
+        }
+
+        // Auto-link bus route if transport required
+        let busRouteId = null;
+        if (transportRequired && transportRoute) {
+            const BusRoute = require('../models/BusRoute');
+            const matchedRoute = await BusRoute.findOne({
+                routeName: { $regex: new RegExp(transportRoute.trim(), 'i') }
+            });
+            if (matchedRoute) {
+                busRouteId = matchedRoute._id;
+            } else {
+                const routeByStop = await BusRoute.findOne({
+                    stops: { $elemMatch: { $regex: new RegExp(transportRoute.trim(), 'i') } }
+                });
+                if (routeByStop) busRouteId = routeByStop._id;
             }
         }
 
@@ -113,6 +130,7 @@ const registerStudent = async (req, res) => {
             transportRequired: transportRequired || false,
             transportMode: transportMode || "",
             transportRoute: transportRoute || "",
+            busRoute: busRouteId,
             // Extra
             profileImage: profileImageUrl,
             aadharNumber: aadharNumber || "",

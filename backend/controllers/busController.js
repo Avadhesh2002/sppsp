@@ -4,9 +4,8 @@ const Student  = require('../models/Student');
 // GET all routes
 const getRoutes = async (req, res) => {
     const routes = await BusRoute.find().sort({ routeName: 1 });
-    // attach student count to each route
     const counts = await Student.aggregate([
-        { $match: { busRoute: { $ne: null }, accountStatus: 'active' } },
+        { $match: { busRoute: { $ne: null } } },
         { $group: { _id: '$busRoute', count: { $sum: 1 } } },
     ]);
     const countMap = {};
@@ -40,7 +39,6 @@ const updateRoute = async (req, res) => {
 
 // DELETE route
 const deleteRoute = async (req, res) => {
-    // unassign students first
     await Student.updateMany({ busRoute: req.params.id }, { $set: { busRoute: null } });
     await BusRoute.findByIdAndDelete(req.params.id);
     res.json({ message: 'Route deleted and students unassigned' });
@@ -48,8 +46,8 @@ const deleteRoute = async (req, res) => {
 
 // GET students on a route
 const getRouteStudents = async (req, res) => {
-    const students = await Student.find({ busRoute: req.params.id, accountStatus: 'active' })
-        .select('name class admissionNo UID fatherName guardianMobile')
+    const students = await Student.find({ busRoute: req.params.id })
+        .select('name class admissionNo UID fatherName fatherMobile guardianMobile accountStatus')
         .sort({ class: 1, name: 1 });
     res.json(students);
 };
@@ -75,11 +73,44 @@ const removeStudent = async (req, res) => {
     res.json({ message: 'Student removed from route' });
 };
 
-// GET all students with their bus route info (for fee integration)
+// GET bus route info for a student
 const getStudentBusRoute = async (req, res) => {
     const student = await Student.findById(req.params.studentId).populate('busRoute', 'routeName monthlyFee');
     if (!student) return res.status(404).json({ message: 'Student not found' });
     res.json({ busRoute: student.busRoute || null });
 };
 
-module.exports = { getRoutes, createRoute, updateRoute, deleteRoute, getRouteStudents, assignStudent, removeStudent, getStudentBusRoute };
+// One-time migration: link existing students (transportRoute string) to busRoute ObjectId
+const migrateExistingStudents = async (req, res) => {
+    try {
+        const routes = await BusRoute.find();
+        let updated = 0;
+
+        for (const route of routes) {
+            const nameParts = [route.routeName, ...(route.stops || [])];
+            const orQuery = nameParts.map(n => ({
+                transportRoute: { $regex: new RegExp(n.trim(), 'i') }
+            }));
+            const students = await Student.find({
+                busRoute: null,
+                transportRequired: true,
+                $or: orQuery
+            });
+            for (const s of students) {
+                s.busRoute = route._id;
+                await s.save();
+                updated++;
+            }
+        }
+
+        res.json({ message: `Migration done. ${updated} students linked to bus routes.` });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+module.exports = {
+    getRoutes, createRoute, updateRoute, deleteRoute,
+    getRouteStudents, assignStudent, removeStudent,
+    getStudentBusRoute, migrateExistingStudents
+};

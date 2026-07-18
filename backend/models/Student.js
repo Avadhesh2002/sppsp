@@ -192,7 +192,7 @@ const studentSchema = new mongoose.Schema({
 
     parentEmail: {
         type: String,
-        required: [true, "Guardian email is mandatory"],
+        default: "",
         lowercase: true,
         trim: true
     },
@@ -247,6 +247,12 @@ const studentSchema = new mongoose.Schema({
     transportRoute: {
         type: String,
         default: ""
+    },
+
+    busRoute: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BusRoute',
+        default: null
     },
 
     // ============================

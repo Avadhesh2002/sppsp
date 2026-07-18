@@ -543,13 +543,22 @@ const addStudent = async (req, res) => {
             profileImage: rawProfileImage,
             aadharNumber, penNumber, fatherQualification, siblingName,
             admissionType, documents, academicYear,
-            UID, password
+            UID, password,
+            // transport fields
+            transportRequired, transportMode, transportRoute,
+            section, bloodGroup,
+            permanentAddress, permanentAddressSameAsResidential,
+            city, district, state,
+            fatherOccupation, motherOccupation, guardianRelation, guardianOccupation,
+            fatherAadharNumber, motherAadharNumber,
+            whatsappNumber, previousSchoolName, previousSchoolClass, previousSchoolYear,
+            siblingName: _sn
         } = req.body;
 
         // Required fields validation
-        if (!name || !dateOfBirth || !gender || !studentClass || !address || !pincode || !category || !parentEmail) {
+        if (!name || !dateOfBirth || !gender || !studentClass || !address || !pincode || !category) {
             return res.status(400).json({
-                message: "Please fill all required fields: Name, DOB, Gender, Class, Address, Pincode, Category, and Email"
+                message: "Please fill all required fields: Name, DOB, Gender, Class, Address, Pincode, Category"
             });
         }
 
@@ -607,21 +616,53 @@ const addStudent = async (req, res) => {
         const settings = await Settings.findOne();
         const currentYear = settings ? settings.currentAcademicYear : new Date().getFullYear() + "-" + (new Date().getFullYear() + 1);
 
+        // Auto-link bus route if transport required
+        let busRouteId = null;
+        if (transportRequired && transportRoute) {
+            const BusRoute = require('../models/BusRoute');
+            const matchedRoute = await BusRoute.findOne({
+                routeName: { $regex: new RegExp(transportRoute.trim(), 'i') }
+            });
+            if (!matchedRoute) {
+                // try matching by stop name
+                const routeByStop = await BusRoute.findOne({
+                    stops: { $elemMatch: { $regex: new RegExp(transportRoute.trim(), 'i') } }
+                });
+                if (routeByStop) busRouteId = routeByStop._id;
+            } else {
+                busRouteId = matchedRoute._id;
+            }
+        }
+
         const newStudent = await Student.create({
             name,
             dateOfBirth,
             gender,
             class: studentClass,
+            section: section || "",
+            bloodGroup: bloodGroup || "",
             address,
+            city: city || "",
+            district: district || "",
+            state: state || "",
             pincode,
+            permanentAddressSameAsResidential: permanentAddressSameAsResidential !== false,
+            permanentAddress: permanentAddress || "",
             category,
             fatherName: fatherName || "",
             fatherMobile: fatherMobile || "",
+            fatherOccupation: fatherOccupation || "",
+            fatherAadharNumber: fatherAadharNumber || "",
             motherName: motherName || "",
             motherMobile: motherMobile || "",
+            motherOccupation: motherOccupation || "",
+            motherAadharNumber: motherAadharNumber || "",
             guardianName: guardianName || "",
             guardianMobile: guardianMobile || "",
-            parentEmail,
+            guardianRelation: guardianRelation || "",
+            guardianOccupation: guardianOccupation || "",
+            parentEmail: parentEmail || "",
+            whatsappNumber: whatsappNumber || "",
             profileImage: profileImageUrl,
             aadharNumber: aadharNumber || "",
             penNumber: penNumber || "",
@@ -630,6 +671,10 @@ const addStudent = async (req, res) => {
             admissionType: admissionType || 'New',
             documents: documents || {},
             academicYear: academicYear || currentYear,
+            transportRequired: transportRequired || false,
+            transportMode: transportMode || "",
+            transportRoute: transportRoute || "",
+            busRoute: busRouteId,
             UID,
             password: finalPassword,
             accountStatus: 'active',
