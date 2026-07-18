@@ -846,7 +846,7 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
               <p className="text-[10px] font-black text-blue-700 uppercase">Father</p>
               <div className="grid grid-cols-2 gap-3">
                 <EF label="Father's Name" name="fatherName" defaultValue={student.fatherName} />
-                <EF label="Mobile" name="fatherMobile" defaultValue={student.fatherMobile} maxLength={10} />
+                <EF label="Mobile" name="fatherMobile" type="tel" defaultValue={student.fatherMobile} maxLength={10} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <EF label="Occupation" name="fatherOccupation" defaultValue={student.fatherOccupation} />
@@ -858,7 +858,7 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
               <p className="text-[10px] font-black text-pink-700 uppercase">Mother</p>
               <div className="grid grid-cols-2 gap-3">
                 <EF label="Mother's Name" name="motherName" defaultValue={student.motherName} />
-                <EF label="Mobile" name="motherMobile" defaultValue={student.motherMobile} maxLength={10} />
+                <EF label="Mobile" name="motherMobile" type="tel" defaultValue={student.motherMobile} maxLength={10} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <EF label="Occupation" name="motherOccupation" defaultValue={student.motherOccupation} />
@@ -872,7 +872,7 @@ const EditStudentModal = ({ isOpen, onClose, student, onSubmit, submitting }) =>
                 <EF label="Relation" name="guardianRelation" defaultValue={student.guardianRelation} />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <EF label="Mobile" name="guardianMobile" defaultValue={student.guardianMobile} maxLength={10} />
+                <EF label="Mobile" name="guardianMobile" type="tel" defaultValue={student.guardianMobile} maxLength={10} />
                 <EF label="Occupation" name="guardianOccupation" defaultValue={student.guardianOccupation} />
               </div>
             </div>
@@ -1051,7 +1051,8 @@ const EF = ({ label, name, type='text', defaultValue='', placeholder='', maxLeng
   <div>
     <label className={LB}>{label}</label>
     <input name={name} type={type} defaultValue={defaultValue || ''} placeholder={placeholder}
-      maxLength={maxLength} autoComplete="off" className={INP} />
+      maxLength={maxLength} autoComplete="off" className={INP}
+      onInput={e => { if (type === 'tel') e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }} />
   </div>
 );
 const ES = ({ label, name, defaultValue='', options }) => (
@@ -1069,7 +1070,8 @@ const FI = ({ label, name, type='text', placeholder='', defaultValue='', require
   <div>
     <label className={LB}>{label}{required && <span className="text-danger ml-0.5">*</span>}</label>
     <input name={name} type={type} defaultValue={defaultValue} placeholder={placeholder}
-      required={required} maxLength={maxLength} autoComplete="off" className={INP} />
+      required={required} maxLength={maxLength} autoComplete="off" className={INP}
+      onInput={e => { if (type === 'tel') e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }} />
   </div>
 );
 
@@ -1286,7 +1288,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <FI label="Occupation" name="fatherOccupation" />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FI label="Mobile" name="fatherMobile" maxLength={10} />
+                <FI label="Mobile" name="fatherMobile" type="tel" maxLength={10} />
                 <FI label="Aadhar No." name="fatherAadharNumber" maxLength={14} />
               </div>
               <FI label="Qualification" name="fatherQualification" placeholder="e.g. Graduate" />
@@ -1298,7 +1300,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <FI label="Occupation" name="motherOccupation" />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FI label="Mobile" name="motherMobile" maxLength={10} />
+                <FI label="Mobile" name="motherMobile" type="tel" maxLength={10} />
                 <FI label="Aadhar No." name="motherAadharNumber" maxLength={14} />
               </div>
             </div>
@@ -1309,7 +1311,7 @@ const AddStudentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <FI label="Relation" name="guardianRelation" />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FI label="Mobile" name="guardianMobile" maxLength={10} />
+                <FI label="Mobile" name="guardianMobile" type="tel" maxLength={10} />
                 <FI label="Occupation" name="guardianOccupation" />
               </div>
             </div>

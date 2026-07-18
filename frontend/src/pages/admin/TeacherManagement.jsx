@@ -348,7 +348,7 @@ const TeacherManagement = () => {
           <div className="p-4 bg-indigo-50/40 rounded-2xl border border-indigo-100 space-y-4">
             <p className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">2. Employment & Contact Information</p>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Phone Number" {...register("phone", { required: "Phone is required", pattern: /^\d{10}$/ })} error={errors.phone && "Must be 10 digits"} />
+              <Input label="Phone Number" {...register("phone", { required: "Phone is required", pattern: /^\d{10}$/ })} error={errors.phone && "Must be 10 digits"} type="tel" maxLength={10} onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }} />
               <Input label="Email Address" type="email" {...register("email")} />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -394,7 +394,7 @@ const TeacherManagement = () => {
           <div className="p-4 bg-indigo-50/40 rounded-2xl border border-indigo-100 space-y-4">
             <p className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">2. Professional & Contact</p>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Phone (10 Digits)" placeholder="Enter 10 digit number" {...register("phone", { required: "Required", pattern: /^\d{10}$/ })} error={errors.phone && "Invalid phone (10 digits)"} />
+              <Input label="Phone (10 Digits)" placeholder="Enter 10 digit number" type="tel" maxLength={10} onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }} {...register("phone", { required: "Required", pattern: /^\d{10}$/ })} error={errors.phone && "Invalid phone (10 digits)"} />
               <Input label="Email (Optional)" type="email" placeholder="manju18@gmail.com" {...register("email")} />
             </div>
             <div className="grid grid-cols-2 gap-4">

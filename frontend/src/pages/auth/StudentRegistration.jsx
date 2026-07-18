@@ -290,8 +290,9 @@ const StudentRegistration = () => {
                   <Input label="Father's Occupation" placeholder="Occupation" {...register("fatherOccupation")} />
                 </FieldRow>
                 <FieldRow>
-                  <Input label="Father's Mobile" icon={Phone} maxLength={10} placeholder="10-digit number"
+                  <Input label="Father's Mobile" icon={Phone} type="tel" maxLength={10} placeholder="10-digit number"
                     {...register("fatherMobile", { pattern: { value: /^\d{10}$/, message: "Must be 10 digits" } })}
+                    onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }}
                     error={errors.fatherMobile?.message} />
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-secondary uppercase">Father's Aadhar No.</label>
@@ -314,8 +315,9 @@ const StudentRegistration = () => {
                   <Input label="Mother's Occupation" placeholder="Occupation" {...register("motherOccupation")} />
                 </FieldRow>
                 <FieldRow>
-                  <Input label="Mother's Mobile" icon={Phone} maxLength={10} placeholder="10-digit number"
+                  <Input label="Mother's Mobile" icon={Phone} type="tel" maxLength={10} placeholder="10-digit number"
                     {...register("motherMobile", { pattern: { value: /^\d{10}$/, message: "Must be 10 digits" } })}
+                    onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }}
                     error={errors.motherMobile?.message} />
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-secondary uppercase">Mother's Aadhar No.</label>
@@ -340,8 +342,9 @@ const StudentRegistration = () => {
                   <Input label="Relation" placeholder="e.g. Uncle, Grandparent" {...register("guardianRelation")} />
                 </FieldRow>
                 <FieldRow>
-                  <Input label="Guardian's Mobile" icon={Phone} maxLength={10} placeholder="10-digit number"
+                  <Input label="Guardian's Mobile" icon={Phone} type="tel" maxLength={10} placeholder="10-digit number"
                     {...register("guardianMobile", { pattern: { value: /^\d{10}$/, message: "Must be 10 digits" } })}
+                    onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }}
                     error={errors.guardianMobile?.message} />
                   <Input label="Guardian's Occupation" placeholder="Occupation" {...register("guardianOccupation")} />
                 </FieldRow>
@@ -357,8 +360,9 @@ const StudentRegistration = () => {
                       pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email" }
                     })}
                     error={errors.parentEmail?.message} />
-                  <Input label="WhatsApp Number" icon={Phone} maxLength={10} placeholder="10-digit WhatsApp"
+                  <Input label="WhatsApp Number" icon={Phone} type="tel" maxLength={10} placeholder="10-digit WhatsApp"
                     {...register("whatsappNumber", { pattern: { value: /^\d{10}$/, message: "Must be 10 digits" } })}
+                    onInput={e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); }}
                     error={errors.whatsappNumber?.message} />
                 </FieldRow>
 
