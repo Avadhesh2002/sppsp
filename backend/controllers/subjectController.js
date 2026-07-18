@@ -3,10 +3,6 @@ const Subject = require('../models/Subject');
 // @desc    Create a new Subject
 const createSubject = async (req, res) => {
     try {
-        const { subjectCode } = req.body;
-        const subjectExists = await Subject.findOne({ subjectCode });
-        if (subjectExists) return res.status(400).json({ message: "Subject code already exists" });
-
         const subject = await Subject.create(req.body);
         res.status(201).json(subject);
     } catch (error) {
@@ -66,21 +62,15 @@ const deleteSubject = async (req, res) => {
 
 const updateSubject = async (req, res) => {
     try {
-        const { subjectName, subjectCode, applicableClasses, maxMarks } = req.body;
+        const { subjectName, applicableClasses, maxMarks } = req.body;
 
         const subject = await Subject.findById(req.params.id);
         if (!subject) return res.status(404).json({ message: "Subject not found" });
 
-        // Security check: If code is being changed, ensure it's not taken by another subject
-        if (subjectCode && subjectCode !== subject.subjectCode) {
-            const codeExists = await Subject.findOne({ subjectCode });
-            if (codeExists) return res.status(400).json({ message: "This Subject Code is already in use." });
-        }
-
         const updatedSubject = await Subject.findByIdAndUpdate(
             req.params.id,
-            { $set: { subjectName, subjectCode, applicableClasses, maxMarks } },
-            { new: true, runValidators: true }
+            { $set: { subjectName, applicableClasses, maxMarks } },
+            { new: true, runValidators: false }
         );
 
         res.status(200).json({ message: "Subject updated successfully", updatedSubject });
