@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const subjectSchema = new mongoose.Schema({
     subjectName: { type: String, required: true },
-    subjectCode: { type: String, default: '', sparse: true }, // optional
+    subjectCode: { type: String, default: '' }, // optional, not unique
     // Which classes can take this subject?
         applicableClasses: [{ 
         type: String, 
