@@ -221,3 +221,175 @@ export const generateStudentListPDF = (students, reportTitle, selectedFields) =>
     throw error;
   }
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MASTER LIST — Complete student data, class-wise sorted, landscape A4
+// ─────────────────────────────────────────────────────────────────────────────
+export const generateMasterListPDF = (students) => {
+  try {
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    const pageWidth  = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 24;
+
+    const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB') : '---';
+    const v = (val) => (val && String(val).trim()) ? String(val).trim() : '---';
+
+    // CLASS ORDER
+    const CLASS_ORDER = ['Nursery','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'];
+    const sorted = [...students].sort((a, b) => {
+      const ai = CLASS_ORDER.indexOf(a.class);
+      const bi = CLASS_ORDER.indexOf(b.class);
+      if (ai !== bi) return ai - bi;
+      return (a.name || '').localeCompare(b.name || '');
+    });
+
+    // HEADER
+    doc.setFont('times', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(0, 0, 0);
+    doc.text('SARDAR PATEL PUBLIC SCHOOL', pageWidth / 2, 38, { align: 'center' });
+
+    doc.setLineWidth(1.5);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, 46, pageWidth - margin, 46);
+
+    doc.setFontSize(11);
+    doc.setFont('times', 'bold');
+    doc.text('STUDENT MASTER LIST', pageWidth / 2, 62, { align: 'center' });
+
+    doc.setFont('times', 'normal');
+    doc.setFontSize(9);
+    const today = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' });
+    doc.text(`Total Students: ${sorted.length}   |   Generated: ${today}`, pageWidth / 2, 76, { align: 'center' });
+
+    // TABLE COLUMNS
+    const headers = [
+      'S.No', 'Adm. No.', 'Class', 'Student Name', 'Gender',
+      'Date of Birth', 'Category',
+      "Father's Name", "Father's Mobile",
+      "Mother's Name", "Mother's Mobile",
+      'Aadhar No.', 'Address', 'Pincode'
+    ];
+
+    const rows = sorted.map((s, i) => [
+      String(i + 1),
+      v(s.UID),
+      v(s.class),
+      v(s.name),
+      v(s.gender),
+      fmtDate(s.dateOfBirth),
+      v(s.category),
+      v(s.fatherName),
+      v(s.fatherMobile) !== '---' ? v(s.fatherMobile) : v(s.guardianMobile),
+      v(s.motherName),
+      v(s.motherMobile),
+      v(s.aadharNumber),
+      v(s.address),
+      v(s.pincode),
+    ]);
+
+    const colStyles = {
+      0:  { cellWidth: 28,  halign: 'center' },   // S.No
+      1:  { cellWidth: 44,  halign: 'center' },   // Adm No
+      2:  { cellWidth: 40,  halign: 'center' },   // Class
+      3:  { cellWidth: 82,  halign: 'left'   },   // Name
+      4:  { cellWidth: 34,  halign: 'center' },   // Gender
+      5:  { cellWidth: 52,  halign: 'center' },   // DOB
+      6:  { cellWidth: 44,  halign: 'center' },   // Category
+      7:  { cellWidth: 76,  halign: 'left'   },   // Father Name
+      8:  { cellWidth: 60,  halign: 'center' },   // Father Mobile
+      9:  { cellWidth: 72,  halign: 'left'   },   // Mother Name
+      10: { cellWidth: 60,  halign: 'center' },   // Mother Mobile
+      11: { cellWidth: 72,  halign: 'center' },   // Aadhar
+      12: { cellWidth: 'auto', halign: 'left' },  // Address (fills remaining)
+      13: { cellWidth: 42,  halign: 'center' },   // Pincode
+    };
+
+    // Group header rows by class
+    let currentClass = null;
+    let classStartRow = 0;
+    const classGroups = [];
+    sorted.forEach((s, i) => {
+      if (s.class !== currentClass) {
+        if (currentClass !== null) classGroups.push({ cls: currentClass, from: classStartRow, to: i - 1 });
+        currentClass = s.class;
+        classStartRow = i;
+      }
+    });
+    if (currentClass !== null) classGroups.push({ cls: currentClass, from: classStartRow, to: sorted.length - 1 });
+
+    autoTable(doc, {
+      startY: 88,
+      margin: { left: margin, right: margin },
+      head: [headers],
+      body: rows,
+      theme: 'grid',
+      styles: {
+        font: 'times',
+        fontSize: 7.5,
+        cellPadding: { top: 3.5, right: 3, bottom: 3.5, left: 3 },
+        textColor: [0, 0, 0],
+        lineColor: [0, 0, 0],
+        lineWidth: 0.5,
+        overflow: 'linebreak',
+        valign: 'middle',
+        minCellHeight: 16,
+      },
+      headStyles: {
+        fillColor: [26, 58, 107],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        halign: 'center',
+        fontSize: 7.5,
+        lineWidth: 0.8,
+      },
+      columnStyles: colStyles,
+      // Zebra stripes + class group highlight
+      didParseCell: (data) => {
+        if (data.section !== 'body') return;
+        const rowIdx = data.row.index;
+        const student = sorted[rowIdx];
+        // Alternate row shade
+        if (rowIdx % 2 === 0) {
+          data.cell.styles.fillColor = [245, 247, 252];
+        }
+        // Class change row — slightly darker left border indicator
+        const prev = sorted[rowIdx - 1];
+        if (!prev || prev.class !== student.class) {
+          data.cell.styles.fillColor = [220, 228, 245];
+          data.cell.styles.fontStyle = 'bold';
+        }
+      },
+      didDrawPage: (data) => {
+        // Page header repeat
+        doc.setFont('times', 'bold');
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text('SARDAR PATEL PUBLIC SCHOOL — STUDENT MASTER LIST', margin, 14);
+        // Footer
+        doc.setFont('times', 'italic');
+        doc.setFontSize(7.5);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, margin, pageHeight - 10);
+        doc.text(`Page ${data.pageNumber}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+      }
+    });
+
+    // Signature
+    const finalY = doc.lastAutoTable.finalY + 40;
+    if (finalY + 30 < pageHeight - 24) {
+      doc.setTextColor(0, 0, 0);
+      doc.setLineWidth(1);
+      doc.line(pageWidth - margin - 150, finalY, pageWidth - margin, finalY);
+      doc.setFont('times', 'bold');
+      doc.setFontSize(10);
+      doc.text('Principal Signature', pageWidth - margin - 75, finalY + 16, { align: 'center' });
+    }
+
+    doc.save(`master_list_${new Date().toISOString().slice(0,10)}.pdf`);
+    return true;
+  } catch (err) {
+    console.error('Master List PDF Error:', err);
+    throw err;
+  }
+};

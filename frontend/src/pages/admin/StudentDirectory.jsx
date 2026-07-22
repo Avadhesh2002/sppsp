@@ -7,7 +7,7 @@ import Button from '../../components/common/Button';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Toast from '../../components/common/Toast';
 import Modal from '../../components/common/Modal'; 
-import { generateStudentListPDF } from '../../utils/pdfGenerator';
+import { generateStudentListPDF, generateMasterListPDF } from '../../utils/pdfGenerator';
 
 const StudentDirectory = () => {
   // ============ STATE MANAGEMENT ============
@@ -202,7 +202,7 @@ const handleUpdate = async (e) => {
   };
 
   const handlePreparePDF = async () => {
-    if (selectedFields.length === 0) {
+    if (exportCriteria !== 'master' && selectedFields.length === 0) {
       setToast({ message: "Select at least one parameter.", type: "error" });
       return;
     }
@@ -213,13 +213,14 @@ const handleUpdate = async (e) => {
 
     setIsGenerating(true);
     try {
-      const apiParams = { status: 'active', limit: 1000, page: 1 };
+      const apiParams = { status: 'active', limit: 2000, page: 1 };
       
       if (exportCriteria === 'class') {
         apiParams.studentClass = pdfClass;
-      } else {
+      } else if (exportCriteria === 'new_admission') {
         apiParams.admissionType = 'New';
       }
+      // master: no extra filter — fetch all
 
       const res = await API.get('/admin/students', { params: apiParams });
       const studentsArray = res.data.students;
@@ -230,12 +231,15 @@ const handleUpdate = async (e) => {
         return;
       }
 
-      const pdfTitle = exportCriteria === 'class' 
-        ? `Student List - Class ${pdfClass}` 
-        : "New Admissions Master List";
-
       setTimeout(() => {
-        generateStudentListPDF(studentsArray, pdfTitle, selectedFields);
+        if (exportCriteria === 'master') {
+          generateMasterListPDF(studentsArray);
+        } else {
+          const pdfTitle = exportCriteria === 'class' 
+            ? `Student List - Class ${pdfClass}` 
+            : "New Admissions Master List";
+          generateStudentListPDF(studentsArray, pdfTitle, selectedFields);
+        }
         setToast({ message: "PDF Downloaded!", type: "success" });
         setIsPdfModalOpen(false);
         setIsGenerating(false);
@@ -987,6 +991,10 @@ const PdfExportModal = ({ isOpen, onClose, exportCriteria, onCriteriaChange, pdf
         <div className="space-y-2">
           <label className="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">1. Report Type</label>
           <div className="flex p-1 bg-gray-100 rounded-2xl">
+            <button type="button" onClick={() => onCriteriaChange('master')}
+              className={`flex-1 py-2.5 text-xs font-black uppercase rounded-xl transition-all ${exportCriteria === 'master' ? 'bg-white text-primary shadow-sm' : 'text-secondary'}`}>
+              Master List
+            </button>
             <button type="button" onClick={() => onCriteriaChange('class')}
               className={`flex-1 py-2.5 text-xs font-black uppercase rounded-xl transition-all ${exportCriteria === 'class' ? 'bg-white text-primary shadow-sm' : 'text-secondary'}`}>
               Class-Wise
@@ -997,6 +1005,15 @@ const PdfExportModal = ({ isOpen, onClose, exportCriteria, onCriteriaChange, pdf
             </button>
           </div>
         </div>
+
+        {/* Master List info */}
+        {exportCriteria === 'master' && (
+          <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+            <p className="text-xs font-black text-primary uppercase tracking-wide mb-1">Complete Master List</p>
+            <p className="text-xs text-gray-500">Saare active students ka poora data — Admission No., Name, Class, DOB, Father/Mother, Mobile, Aadhar, Address, Category — class-wise sorted.</p>
+          </div>
+        )}
+
         {exportCriteria === 'class' && (
           <div>
             <label className="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">2. Select Class</label>
@@ -1007,31 +1024,35 @@ const PdfExportModal = ({ isOpen, onClose, exportCriteria, onCriteriaChange, pdf
             </select>
           </div>
         )}
-        <div>
-          <label className="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">
-            {exportCriteria === 'class' ? '3. Choose Parameters' : '2. Choose Parameters'}
-          </label>
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            {exportCriteria === 'new_admission' && (
-              <button type="button" onClick={() => toggleField('class')}
-                className={`flex items-center gap-2 p-3 rounded-xl border-2 text-[11px] font-bold transition-all ${selectedFields.includes('class') ? 'bg-amber-50 border-amber-400 text-amber-700' : 'bg-white border-gray-100 text-secondary'}`}>
-                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${selectedFields.includes('class') ? 'bg-amber-500 border-amber-500' : 'bg-white'}`}>
-                  {selectedFields.includes('class') && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                </div>
-                Target Class
-              </button>
-            )}
-            {availableParams.map(param => (
-              <button key={param.id} type="button" onClick={() => toggleField(param.id)}
-                className={`flex items-center gap-2 p-3 rounded-xl border-2 text-[11px] font-bold transition-all ${selectedFields.includes(param.id) ? 'bg-indigo-50 border-primary text-primary' : 'bg-white border-gray-100 text-secondary'}`}>
-                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${selectedFields.includes(param.id) ? 'bg-primary border-primary' : 'bg-white'}`}>
-                  {selectedFields.includes(param.id) && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                </div>
-                {param.label}
-              </button>
-            ))}
+
+        {exportCriteria !== 'master' && (
+          <div>
+            <label className="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">
+              {exportCriteria === 'class' ? '3. Choose Parameters' : '2. Choose Parameters'}
+            </label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {exportCriteria === 'new_admission' && (
+                <button type="button" onClick={() => toggleField('class')}
+                  className={`flex items-center gap-2 p-3 rounded-xl border-2 text-[11px] font-bold transition-all ${selectedFields.includes('class') ? 'bg-amber-50 border-amber-400 text-amber-700' : 'bg-white border-gray-100 text-secondary'}`}>
+                  <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${selectedFields.includes('class') ? 'bg-amber-500 border-amber-500' : 'bg-white'}`}>
+                    {selectedFields.includes('class') && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                  </div>
+                  Target Class
+                </button>
+              )}
+              {availableParams.map(param => (
+                <button key={param.id} type="button" onClick={() => toggleField(param.id)}
+                  className={`flex items-center gap-2 p-3 rounded-xl border-2 text-[11px] font-bold transition-all ${selectedFields.includes(param.id) ? 'bg-indigo-50 border-primary text-primary' : 'bg-white border-gray-100 text-secondary'}`}>
+                  <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${selectedFields.includes(param.id) ? 'bg-primary border-primary' : 'bg-white'}`}>
+                    {selectedFields.includes(param.id) && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                  </div>
+                  {param.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
         <Button fullWidth onClick={onGenerate} isLoading={isGenerating} icon={FileText}>Generate PDF Report</Button>
       </div>
     </Modal>
